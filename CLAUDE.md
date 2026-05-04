@@ -44,6 +44,23 @@ An internal staff portal for F45 Crows Nest trainers. Public URL (no auth gate, 
 
 **Why:** HEIC is an Apple-only format that doesn't display in most browsers. Raw iPhone photos are also large (3-5MB each) and would bloat the repo and slow page loads. Converted JPGs are typically 5x smaller.
 
+## Connected routine (keep in sync)
+
+There is a weekly **remote Claude routine** that generates the Tuesday trainer-group WhatsApp message:
+
+- **ID:** `trig_01WQGaD88yz7K5cv7F9xkBXn`
+- **Name:** "Tuesday Trainer Video + Website Nudge"
+- **Schedule:** Mondays at 21:00 UTC = Tuesdays 7am Sydney (creates a Calendar event for 11am that same day)
+- **Owner of the routine logic:** this Claude session (the Trainer Website project Claude). Whenever site features change, the routine's prompt should also be updated so the generated WhatsApp messages reference real, current features. The routine itself still fires from Anthropic's cloud.
+
+**When to update the routine prompt:**
+- New section or page added to the site (Coaching, Operations, Sales, etc.)
+- URL changes (the site is currently at https://f45crowsnest.github.io/trainer-hub/)
+- New videos or major content additions
+- Significant restructure (e.g., the Operations shift-picker redesign)
+
+**How to update:** use the `RemoteTrigger` tool, action `update`, with the trigger ID above. Load the tool first via `ToolSearch select:RemoteTrigger`. Use `action: get` first to read the current prompt, edit just the parts that need updating, then `action: update` with the full job_config.
+
 ## Update workflow with Claude
 
 When changes are made in a Claude session, the user expects Claude to also push the changes:
