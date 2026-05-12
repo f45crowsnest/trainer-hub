@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Toolkit | Trainer Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="back-link" href="sales.html">&larr; Back</a>
+    <h1>Sales Toolkit</h1>
+    <p class="tagline">How To Sell Memberships</p>
+  </header>
+
+  <main class="content content-wide">
+    <div class="progress-bar">
+      <span id="progress-count">0 of 1</span> watched
+      <button id="reset-progress" class="reset-btn" type="button">Reset</button>
+    </div>
+
+    <p class="intro">Practical sales tools for the floor. Tap a thumbnail to watch. Tap "Read script" if you'd rather read it.</p>
+
+    <div class="video-grid">
+      <div class="video-item" data-id="sales-toolkit-1-local">
+        <a class="thumb-link" href="videos/sales-toolkit-1-final.mp4" target="_blank" rel="noopener">
+          <div class="thumb-wrap">
+            <img src="videos/sales-toolkit-1-thumb.jpg" alt="Sales Toolkit 1: Sell On The Floor" loading="lazy">
+            <span class="play-icon" aria-hidden="true">&#9658;</span>
+            <span class="watched-badge" aria-hidden="true">&#10003;</span>
+          </div>
+        </a>
+        <span class="caption">Toolkit 1</span>
+        <a class="script-link" href="scripts/sales-toolkit-1.html">Read script</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'sales-toolkit-watched';
+    const items = document.querySelectorAll('.video-item');
+    const progressEl = document.getElementById('progress-count');
+    const resetBtn = document.getElementById('reset-progress');
+
+    function getWatched() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveWatched(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function render() {
+      const watched = getWatched();
+      let count = 0;
+      items.forEach(item => {
+        const id = item.dataset.id;
+        if (watched.includes(id)) {
+          item.classList.add('watched');
+          count++;
+        } else {
+          item.classList.remove('watched');
+        }
+      });
+      progressEl.textContent = `${count} of ${items.length}`;
+    }
+
+    items.forEach(item => {
+      const thumbLink = item.querySelector('.thumb-link');
+      thumbLink.addEventListener('click', () => {
+        const id = item.dataset.id;
+        const watched = getWatched();
+        if (!watched.includes(id)) {
+          watched.push(id);
+          saveWatched(watched);
+          render();
+        }
+      });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      saveWatched([]);
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
