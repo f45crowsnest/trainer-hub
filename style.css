@@ -787,6 +787,19 @@ body {
   line-height: 1.4;
 }
 
+.li-note {
+  display: inline-block;
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  background: rgba(255, 180, 0, 0.15);
+  border-left: 3px solid #ffb400;
+  color: #ffd97a;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
 .task-reminder {
   margin-top: 1rem;
   padding: 1rem 1.25rem;
