@@ -4,7 +4,7 @@
 
 An internal staff portal for F45 Crows Nest trainers. Public URL (no auth gate, all content is non-sensitive). The site collects coaching scripts, cleaning procedures, sales playbooks, and pricing references in one place so a new hire can self-serve.
 
-**Live at:** https://zexinjin-gif.github.io/trainer-hub/
+**Live at:** https://f45crowsnest.github.io/trainer-hub/
 
 ## Stack
 
