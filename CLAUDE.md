@@ -44,29 +44,27 @@ An internal staff portal for F45 Crows Nest trainers. Public URL (no auth gate, 
 
 **Why:** HEIC is an Apple-only format that doesn't display in most browsers. Raw iPhone photos are also large (3-5MB each) and would bloat the repo and slow page loads. Converted JPGs are typically 5x smaller.
 
-## Connected routine (weekly changelog)
+## Connected routine (on-demand WhatsApp draft)
 
-There is a weekly **remote Claude routine** that generates the Tuesday trainer-group WhatsApp message. The whole point of this routine is to send a **weekly changelog**: what's new on the Trainer Hub since last Tuesday, so trainers stay engaged with new content.
+There is a **remote Claude routine** that drafts the trainer-group WhatsApp message announcing what is new on the Trainer Hub. It is **on-demand**: Jino fires it whenever he wants to send a message (no fixed schedule). The old Tuesday-cron routine is gone.
 
-- **ID:** `trig_01WQGaD88yz7K5cv7F9xkBXn`
-- **Name:** "Tuesday Trainer Video + Website Nudge"
-- **Schedule:** Mondays at 21:00 UTC = Tuesdays 7am Sydney (creates a Calendar event for 11am that same day, with the WhatsApp draft inside)
+- **ID:** `trig_01CTvJynVGRKdqvLHSQwZxWC`
+- **Name:** "Trainer Hub: WhatsApp draft (on-demand)"
+- **Schedule:** `enabled: false` with a placeholder yearly cron. Does not auto-fire. Trigger manually with `RemoteTrigger action: run`.
+- **Output:** Reads last 7 days of git log, picks the most meaningful user-facing change, drafts a casual manager-to-team message (under 150 words, no dashes as punctuation), prints it between `---DRAFT START---` and `---DRAFT END---` markers, and creates a Google Calendar event titled "Trainer Hub: WhatsApp draft ready" on Jino's primary calendar with the draft in the description (so he can copy from his phone).
+- **MCP connectors:** Google Calendar auto-attached at account level (visible in routine config).
+- **Goes to the TRAINER group on WhatsApp, not a coaching group.** (Jino confirmed.)
 - **The routine fires from Anthropic's cloud, not this local session.**
 
-**This Claude's job (the Trainer Website project Claude):**
+**Triggering from this Claude session:**
 
-Once a week, before Tuesday morning Sydney time, update the routine prompt with a list of changes from the past 7 days. The routine's message generator uses this list as the actual content of the WhatsApp message. Without an updated list, the routine falls back on stale info.
+1. `ToolSearch select:RemoteTrigger` (deferred tool, not loaded by default)
+2. `RemoteTrigger {action: "run", trigger_id: "trig_01CTvJynVGRKdqvLHSQwZxWC"}`
+3. Calendar event appears on Jino's phone in a couple of minutes. Run output is also visible at <https://claude.ai/code/routines/trig_01CTvJynVGRKdqvLHSQwZxWC>.
 
-**Weekly update workflow:**
+**Updating the routine prompt:**
 
-1. Run `git log --since="<last Tuesday's date>" --pretty=format:'%ad | %s' --date=short` to see the week's commits.
-2. Group commits into 2-5 user-facing bullets (skip purely cosmetic commits, typo fixes, scaffolding). Phrase from a trainer's perspective ("Cleaning Walkthroughs is live, 21 photos with tips" not "added cleaning-walkthroughs.html"). Ignore commits that don't touch trainer-facing content (CLAUDE.md, gitignore, internal refactors).
-3. Replace the **`## THIS WEEK'S UPDATES`** block in the routine prompt with the new bullets. Use `RemoteTrigger` with `action: get` first, then `action: update` with the full job_config.
-4. Do this any time during the week, but ideally on Sunday or Monday so it's fresh when the routine fires Tuesday morning.
-
-**If nothing meaningful shipped that week:** put a single bullet like "no big changes this week, just keep the hub bookmarked and watch the videos if you haven't" so the routine still produces a message instead of going stale.
-
-**Loading RemoteTrigger:** `ToolSearch select:RemoteTrigger` (the tool is deferred and not loaded by default).
+Use `RemoteTrigger action: get` first, then `action: update` with the full `job_config`. The routine reads commits itself, so the prompt rarely needs editing. Only update if voice/format guidance needs to change.
 
 ## Update workflow with Claude
 
