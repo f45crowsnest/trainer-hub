@@ -1224,3 +1224,39 @@ body {
   }
 }
 
+/* What To Do With Newbies */
+.panel-lead {
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.example-report {
+  background: #0f1a0f;
+  border: 1px solid #2e7d32;
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.example-report p {
+  color: #e5e5e5;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.example-report .example-name {
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.5rem;
+}
+
+.example-note {
+  margin-top: 0.85rem;
+  color: #888;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+

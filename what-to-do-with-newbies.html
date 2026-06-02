@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What To Do With Newbies | Trainer Hub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="back-link" href="coaching.html">&larr; Back</a>
+    <h1>What To Do With Newbies</h1>
+    <p class="tagline">First class, done right</p>
+  </header>
+
+  <main class="content">
+    <p class="shift-prompt">Which newbie walked in?</p>
+
+    <div class="shift-tabs" role="tablist">
+      <button class="shift-tab active" type="button" data-newbie="classpass">ClassPass First Time</button>
+      <button class="shift-tab" type="button" data-newbie="trialist">First Time Trialist</button>
+    </div>
+
+    <div class="shift-panel active" data-panel="classpass">
+      <p class="panel-lead">For a ClassPass member's first class, there is really only one thing you must get done.</p>
+
+      <div class="task-callout">
+        <span class="task-label">The one thing that matters</span>
+        <p class="task-text">Get them to sign the liability waiver</p>
+        <p class="task-tip">On the iPad, open their profile and tap the red "Liability waiver not signed" flag. Have them sign it before they start.</p>
+      </div>
+
+      <div class="task-reminder">
+        <span class="reminder-label">Why it matters</span>
+        <p class="reminder-text">If someone gets injured and never signed, the gym is exposed. Clients have tried to sue before. This is the part you cannot skip.</p>
+      </div>
+
+      <h3 class="checklist-title">Checklist</h3>
+      <ul class="checklist">
+        <li>Open their profile on the iPad</li>
+        <li>Tap "Liability waiver not signed" and get them to sign</li>
+        <li>Take a photo if they are happy to. If you forget, no stress.
+          <span class="li-note">Photo is optional for ClassPass first-timers.</span>
+        </li>
+        <li>No newbie report needed for ClassPass</li>
+      </ul>
+    </div>
+
+    <div class="shift-panel" data-panel="trialist">
+      <p class="panel-lead">A trialist is on a paid trial (right now it is 3 classes for $30). The plan does not matter, the steps are the same every time.</p>
+
+      <h3 class="checklist-title">Checklist</h3>
+      <ul class="checklist">
+        <li>Check their liability waiver is green (signed)
+          <span class="li-note">If it is not green, get them to sign on the iPad first.</span>
+        </li>
+        <li>Take a picture of them</li>
+        <li>Write a newbie report</li>
+        <li>Post the newbie report in the WhatsApp trainers group</li>
+      </ul>
+
+      <h3 class="checklist-title">Example newbie report</h3>
+      <div class="example-report">
+        <p class="example-name">Sarah Chen</p>
+        <p>Sarah is Megan's sister and today was her first time training with us. She loves running but doesn't do much strength work. She already knew a bit about F45 and really enjoyed the hybrid class today. She'll be back Thursday for a resistance class. No injuries.</p>
+      </div>
+      <p class="example-note">A good report covers: their name, who they know or how they found us, their fitness background, how the class went, when they are back next, and any injuries.</p>
+    </div>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll('.shift-tab');
+    const panels = document.querySelectorAll('.shift-panel');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const key = tab.dataset.newbie;
+        tabs.forEach(t => t.classList.toggle('active', t === tab));
+        panels.forEach(p => p.classList.toggle('active', p.dataset.panel === key));
+      });
+    });
+  </script>
+</body>
+</html>
