@@ -21,8 +21,8 @@
       transition: transform .2s ease; filter: drop-shadow(0 6px 10px rgba(0,0,0,.2)); }
     #hub-chat-btn:hover { transform: scale(1.08); }
     #hub-chat-btn lottie-player { width: 100%; height: 100%; pointer-events: none; }
-    #hub-chat-panel { position: fixed; bottom: 155px; right: 18px; width: 340px; max-width: 92vw;
-      height: 460px; max-height: 70vh; background: #fff; border-radius: 14px; display: none;
+    #hub-chat-panel { position: fixed; bottom: 155px; right: 18px; width: 390px; max-width: 94vw;
+      height: 580px; max-height: 80vh; background: #fff; border-radius: 14px; display: none;
       flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.25);
       z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     #hub-chat-panel.open { display: flex; }
