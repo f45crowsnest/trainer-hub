@@ -1,0 +1,6 @@
+# Secrets, never commit these
+.env
+.dev.vars
+
+# Dependencies
+node_modules/
