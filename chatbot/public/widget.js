@@ -16,12 +16,12 @@
   const style = document.createElement('style');
   style.textContent = `
     @keyframes hub-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    #hub-chat-btn { position: fixed; bottom: 14px; right: 14px; width: 100px; height: 100px;
+    #hub-chat-btn { position: fixed; bottom: 14px; right: 14px; width: 130px; height: 130px;
       cursor: pointer; z-index: 9999; animation: hub-float 3s ease-in-out infinite;
       transition: transform .2s ease; filter: drop-shadow(0 6px 10px rgba(0,0,0,.2)); }
     #hub-chat-btn:hover { transform: scale(1.08); }
     #hub-chat-btn lottie-player { width: 100%; height: 100%; pointer-events: none; }
-    #hub-chat-panel { position: fixed; bottom: 124px; right: 18px; width: 340px; max-width: 92vw;
+    #hub-chat-panel { position: fixed; bottom: 155px; right: 18px; width: 340px; max-width: 92vw;
       height: 460px; max-height: 70vh; background: #fff; border-radius: 14px; display: none;
       flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.25);
       z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
