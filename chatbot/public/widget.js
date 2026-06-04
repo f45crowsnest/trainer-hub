@@ -3,9 +3,9 @@
 // Add it to a page with:  <script src="widget.js"></script>
 
 (function () {
-  // Change these two when you go live:
-  const BACKEND_URL = 'http://localhost:8787/chat'; // your backend address
-  const ANIMATION_URL = 'live-chatbot.json';        // path to the Lottie animation
+  // Live URLs (the backend on Render, the animation on GitHub Pages):
+  const BACKEND_URL = 'https://trainer-hub-chatbot.onrender.com/chat';
+  const ANIMATION_URL = 'https://f45crowsnest.github.io/trainer-hub/chatbot/public/live-chatbot.json';
 
   // Load the Lottie player library (this is what plays the animated character).
   const lottieScript = document.createElement('script');
