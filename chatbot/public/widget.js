@@ -22,20 +22,21 @@
     #hub-chat-btn:hover { transform: scale(1.08); }
     #hub-chat-btn lottie-player { width: 100%; height: 100%; pointer-events: none; }
     #hub-chat-panel { position: fixed; bottom: 155px; right: 18px; width: 390px; max-width: 94vw;
-      height: 580px; max-height: 80vh; background: #fff; border-radius: 14px; display: none;
-      flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      height: 580px; max-height: 80vh; background: #161618; border: 1px solid #2a2a2e; border-radius: 14px; display: none;
+      flex-direction: column; overflow: hidden; box-shadow: 0 12px 34px rgba(0,0,0,.5);
       z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     #hub-chat-panel.open { display: flex; }
-    #hub-chat-head { background: #1E1545; color: #fff; padding: 14px 16px; font-weight: 700; }
-    #hub-chat-head small { display: block; font-weight: 400; opacity: .8; font-size: 12px; }
-    #hub-chat-log { flex: 1; padding: 14px; overflow-y: auto; background: #f6f7f9; }
+    #hub-chat-head { background: #0f0f10; color: #fff; padding: 14px 16px; font-weight: 700; border-bottom: 2px solid #ffb400; }
+    #hub-chat-head small { display: block; font-weight: 400; color: #ffb400; font-size: 12px; }
+    #hub-chat-log { flex: 1; padding: 14px; overflow-y: auto; background: #161618; }
     .hub-msg { margin: 6px 0; padding: 9px 12px; border-radius: 12px; max-width: 85%;
       font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
-    .hub-msg.user { background: #1E1545; color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
-    .hub-msg.bot { background: #fff; color: #222; border: 1px solid #e3e6ea; border-bottom-left-radius: 4px; }
-    #hub-chat-form { display: flex; border-top: 1px solid #e3e6ea; }
-    #hub-chat-input { flex: 1; border: none; padding: 13px; font-size: 14px; outline: none; }
-    #hub-chat-send { border: none; background: #1E1545; color: #fff; padding: 0 18px; cursor: pointer; font-weight: 700; }
+    .hub-msg.user { background: #ffb400; color: #111; margin-left: auto; border-bottom-right-radius: 4px; font-weight: 500; }
+    .hub-msg.bot { background: #242427; color: #ececec; border: 1px solid #34343a; border-bottom-left-radius: 4px; }
+    #hub-chat-form { display: flex; border-top: 1px solid #2a2a2e; background: #0f0f10; }
+    #hub-chat-input { flex: 1; border: none; padding: 13px; font-size: 14px; outline: none; background: #0f0f10; color: #fff; }
+    #hub-chat-input::placeholder { color: #888; }
+    #hub-chat-send { border: none; background: #ffb400; color: #111; padding: 0 18px; cursor: pointer; font-weight: 700; }
   `;
   document.head.appendChild(style);
 

@@ -23,6 +23,28 @@ An internal staff portal for F45 Crows Nest trainers. Public URL (no auth gate, 
 - `files/` holds downloadable PDFs
 - `style.css` is the single shared stylesheet
 
+## Chatbot (Trainer Hub Assistant)
+
+An AI chatbot floats on every page (an animated mascot, bottom-right). Trainers ask it about coaching, operations, and sales; it answers from the hub content in Jino's casual voice (one useful nugget, then a follow-up question, plain text, no markdown, no dashes).
+
+**Everything lives under `chatbot/`:**
+
+- `chatbot/system-prompt.md` is the bot's BRAIN: what it knows plus how it talks. **Edit this to change the bot's answers or voice.**
+- `chatbot/server.js` is a small Node/Express backend that holds the API key and calls Claude (model: `claude-haiku-4-5`).
+- `chatbot/public/widget.js` is the front-end widget (the floating mascot plus the chat window). Edit this for size, colours, or behaviour.
+- `chatbot/public/live-chatbot.json` is the Lottie animation for the mascot.
+- The widget is added to every page with one line before `</body>`: `<script src="https://f45crowsnest.github.io/trainer-hub/chatbot/public/widget.js"></script>`
+
+**Hosting:**
+
+- Frontend (widget + animation): served by GitHub Pages from this repo, same as the site.
+- Backend: hosted on **Render** (free tier), service `trainer-hub-chatbot`, URL `https://trainer-hub-chatbot.onrender.com`. Render watches the `chatbot/` folder and auto-redeploys on every push to `main`.
+- The Anthropic API key lives in **Render's environment variables** as `ANTHROPIC_API_KEY`, never in the repo (`chatbot/.env` is gitignored).
+
+**To update the bot:** edit the file, then `git push`. Pages redeploys the widget (~1 min); Render redeploys the brain (~2 min). Hard-refresh (Cmd+Shift+R) to see widget changes.
+
+**Note:** the free Render tier sleeps after ~15 min idle, so the first reply after a quiet spell takes ~40s (cold start), then it is fast. A $7/mo Render upgrade removes this.
+
 ## Conventions
 
 - Trainer's owner is **Jino** (Studio Manager). Owners of the gym are **Armand and Brigid**.
