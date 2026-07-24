@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardio | Winter Lock In Mini Challenge</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%92%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Instrument+Sans:wght@500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Instrument+Sans:wght@500;600;700&display=swap" rel="stylesheet"></noscript>
+  <link rel="stylesheet" href="mini.css">
+</head>
+<body class="brand-navy-page">
+  <div class="shell">
+    <div class="topbar">
+      <a class="back-link" href="index.html">&larr; Mini Challenge</a>
+      <span class="week-pill">WEEK 2</span>
+    </div>
+
+    <div id="form-view">
+      <h1 class="page-title brand-navy">Cardio</h1>
+      <p class="page-sub">2 minutes, one erg, everything you've got. Punch in your metres when you're done.</p>
+
+      <noscript><p class="noscript-note">Your browser has JavaScript switched off, so the score can't be calculated. Turn it on and refresh, or grab a trainer.</p></noscript>
+
+      <p class="form-error" id="form-error" role="alert"></p>
+
+      <div class="field">
+        <label for="f-name">Your name</label>
+        <input id="f-name" type="text" autocomplete="name" autocapitalize="words" maxlength="60" placeholder="e.g. Sam">
+      </div>
+
+      <div class="field">
+        <label>I am</label>
+        <div class="seg" role="group" aria-label="Sex">
+          <button type="button" class="seg-btn" data-group="sex" data-value="f" aria-pressed="false">Female</button>
+          <button type="button" class="seg-btn" data-group="sex" data-value="m" aria-pressed="false">Male</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-age">Age</label>
+        <input id="f-age" type="number" inputmode="numeric" min="14" max="90" placeholder="e.g. 45">
+      </div>
+
+      <div class="field field-row">
+        <div>
+          <label for="f-weight">Weight (kg)</label>
+          <input id="f-weight" type="number" inputmode="decimal" min="30" max="250" step="0.1" placeholder="e.g. 70">
+        </div>
+        <div>
+          <label for="f-height">Height (cm)</label>
+          <input id="f-height" type="number" inputmode="numeric" min="120" max="230" placeholder="e.g. 170">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Your erg</label>
+        <div class="seg three" role="group" aria-label="Erg">
+          <button type="button" class="seg-btn" data-group="event" data-value="row" aria-pressed="false">Rower</button>
+          <button type="button" class="seg-btn" data-group="event" data-value="ski" aria-pressed="false">SkiErg</button>
+          <button type="button" class="seg-btn" data-group="event" data-value="bike" aria-pressed="false">Bike</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-result">Metres in 2 minutes</label>
+        <input id="f-result" type="number" inputmode="numeric" min="100" max="2600" placeholder="e.g. 520">
+        <p class="hint">Read it straight off the erg screen.</p>
+      </div>
+
+      <button class="submit-btn" id="submit-btn" type="button">Get my score</button>
+    </div>
+
+    <div class="score-view" id="score-view">
+      <p class="score-label">Your score</p>
+      <p class="score-number" id="score-number">0</p>
+      <p class="score-points-word">Points</p>
+      <p class="score-msg" id="score-msg"></p>
+      <p class="score-privacy" id="score-privacy">Your score goes straight into Jino's private records. No other member sees it. 🔒</p>
+      <div class="score-actions">
+        <a class="btn-secondary" href="index.html">Back to the challenge</a>
+        <button class="btn-secondary" id="again-btn" type="button">Enter another score</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-foot">
+    <p class="lock-line">YOU VS YOU 🔒</p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="scoring.js"></script>
+  <script>initChallengePage('cardio');</script>
+</body>
+</html>
