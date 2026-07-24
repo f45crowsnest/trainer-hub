@@ -4,5 +4,5 @@
    Google Sheet. Empty string = saving off (scores still calculate). */
 
 var MINI_CONFIG = {
-  SHEET_URL: ''
+  SHEET_URL: 'https://script.google.com/macros/s/AKfycbzQqYZZnRM35iisPsWPup31vqYuncnU7RwSoP9aEWjqv4tFbMuN8AuAniZ5k0jVmgDo_A/exec'
 };
