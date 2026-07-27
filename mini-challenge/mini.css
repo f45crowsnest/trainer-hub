@@ -357,6 +357,84 @@ body {
   margin: 0 auto 1.8rem;
 }
 
+/* ---------- anonymous board ---------- */
+
+.board {
+  margin: 0 auto 1.8rem;
+  max-width: 24rem;
+  text-align: left;
+}
+
+.board-title {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--navy);
+  text-align: center;
+}
+
+.board-sub {
+  color: var(--muted);
+  font-size: 1.02rem;
+  text-align: center;
+  margin: 0.2rem 0 1rem;
+}
+
+.board-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.board-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+}
+
+.board-rank {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--muted);
+  min-width: 2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.board-points {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+  flex: 1;
+}
+
+.board-you {
+  border: 2px solid var(--red);
+  background: #FBEAEA;
+}
+.board-you .board-points { color: var(--red); }
+
+.board-you-tag {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  color: #fff;
+  background: var(--red);
+  border-radius: 8px;
+  padding: 0.2rem 0.6rem;
+}
+
 .score-actions { display: grid; gap: 0.8rem; }
 
 .btn-secondary {

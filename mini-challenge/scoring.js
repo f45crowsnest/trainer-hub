@@ -227,6 +227,50 @@ function initChallengePage(challenge) {
       });
   }
 
+  // anonymous board: fetches points (never names) back from the records
+  // endpoint and shows where this score sits. If the endpoint is not ready
+  // or the network is down, the board simply stays hidden.
+  function renderBoard(ownPoints) {
+    if (typeof MINI_CONFIG === 'undefined' || !MINI_CONFIG.SHEET_URL) return;
+    fetch(MINI_CONFIG.SHEET_URL + '?week=2')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        var scores = (data && data[challenge]) || [];
+        scores = scores.map(Number).filter(function (n) { return !isNaN(n); });
+        // the just-submitted score may not have landed in the sheet yet,
+        // so make sure it appears on the board either way
+        if (scores.indexOf(ownPoints) === -1) scores.push(ownPoints);
+        scores.sort(function (a, b) { return b - a; });
+
+        var listEl = document.getElementById('board-list');
+        listEl.innerHTML = '';
+        var youMarked = false;
+        scores.forEach(function (pts, i) {
+          var li = document.createElement('li');
+          li.className = 'board-row';
+          var rank = document.createElement('span');
+          rank.className = 'board-rank';
+          rank.textContent = String(i + 1);
+          var val = document.createElement('span');
+          val.className = 'board-points';
+          val.textContent = pts + ' pts';
+          li.appendChild(rank);
+          li.appendChild(val);
+          if (!youMarked && pts === ownPoints) {
+            youMarked = true;
+            li.classList.add('board-you');
+            var tag = document.createElement('span');
+            tag.className = 'board-you-tag';
+            tag.textContent = 'YOU';
+            li.appendChild(tag);
+          }
+          listEl.appendChild(li);
+        });
+        document.getElementById('board').hidden = false;
+      })
+      .catch(function () { /* board stays hidden, the score still stands */ });
+  }
+
   submitBtn.addEventListener('click', function () {
     var input = readForm();
     if (!input) return;
@@ -241,6 +285,7 @@ function initChallengePage(challenge) {
     var scoreView = document.getElementById('score-view');
     scoreView.classList.add('show');
     window.scrollTo(0, 0);
+    renderBoard(points);
   });
 
   var defaultPrivacyText = document.getElementById('score-privacy').textContent;
@@ -250,6 +295,7 @@ function initChallengePage(challenge) {
     document.getElementById('form-view').style.display = '';
     document.getElementById('f-result').value = '';
     document.getElementById('score-privacy').textContent = defaultPrivacyText;
+    document.getElementById('board').hidden = true;
     submitBtn.disabled = false;
     window.scrollTo(0, 0);
   });
