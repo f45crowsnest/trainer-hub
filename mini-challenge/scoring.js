@@ -251,46 +251,78 @@ function initChallengePage(challenge) {
   // anonymous board: fetches points (never names) back from the records
   // endpoint and shows where this score sits. If the endpoint is not ready
   // or the network is down, the board simply stays hidden.
-  function renderBoard(ownPointsList) {
+  var BOARD_CATEGORY_ORDER = ['Barbell Squat', 'Bench Press', 'Rower', 'SkiErg', 'BikeErg'];
+
+  function buildBoardList(catLabel, scores, ownEntries) {
+    // include just-submitted scores that have not landed in the sheet yet
+    var mine = ownEntries
+      .filter(function (e) { return e.label === catLabel || catLabel === 'All scores'; })
+      .map(function (e) { return e.points; });
+    var pending = scores.slice();
+    mine.forEach(function (p) {
+      var i = pending.indexOf(p);
+      if (i === -1) scores.push(p); else pending.splice(i, 1);
+    });
+    scores.sort(function (a, b) { return b - a; });
+
+    var listEl = document.createElement('ol');
+    listEl.className = 'board-list';
+    var unmarked = mine.slice();
+    scores.forEach(function (pts, i) {
+      var li = document.createElement('li');
+      li.className = 'board-row';
+      var rank = document.createElement('span');
+      rank.className = 'board-rank';
+      rank.textContent = String(i + 1);
+      var val = document.createElement('span');
+      val.className = 'board-points';
+      val.textContent = pts + ' pts';
+      li.appendChild(rank);
+      li.appendChild(val);
+      var mineIdx = unmarked.indexOf(pts);
+      if (mineIdx !== -1) {
+        unmarked.splice(mineIdx, 1);
+        li.classList.add('board-you');
+        var tag = document.createElement('span');
+        tag.className = 'board-you-tag';
+        tag.textContent = 'YOU';
+        li.appendChild(tag);
+      }
+      listEl.appendChild(li);
+    });
+    return listEl;
+  }
+
+  function renderBoard(ownEntries) {
     if (typeof MINI_CONFIG === 'undefined' || !MINI_CONFIG.SHEET_URL) return;
     fetch(MINI_CONFIG.SHEET_URL + '?week=2')
       .then(function (res) { return res.json(); })
       .then(function (data) {
-        var scores = (data && data[challenge]) || [];
-        scores = scores.map(Number).filter(function (n) { return !isNaN(n); });
-        // the just-submitted scores may not have landed in the sheet yet,
-        // so make sure each one appears on the board either way
-        var pending = scores.slice();
-        ownPointsList.forEach(function (p) {
-          var i = pending.indexOf(p);
-          if (i === -1) scores.push(p); else pending.splice(i, 1);
-        });
-        scores.sort(function (a, b) { return b - a; });
+        var section = (data && data[challenge]) || {};
+        // older script versions return one flat list, newer ones group by event
+        var groups = Array.isArray(section) ? { 'All scores': section } : section;
 
-        var listEl = document.getElementById('board-list');
-        listEl.innerHTML = '';
-        var unmarked = ownPointsList.slice();
-        scores.forEach(function (pts, i) {
-          var li = document.createElement('li');
-          li.className = 'board-row';
-          var rank = document.createElement('span');
-          rank.className = 'board-rank';
-          rank.textContent = String(i + 1);
-          var val = document.createElement('span');
-          val.className = 'board-points';
-          val.textContent = pts + ' pts';
-          li.appendChild(rank);
-          li.appendChild(val);
-          var mine = unmarked.indexOf(pts);
-          if (mine !== -1) {
-            unmarked.splice(mine, 1);
-            li.classList.add('board-you');
-            var tag = document.createElement('span');
-            tag.className = 'board-you-tag';
-            tag.textContent = 'YOU';
-            li.appendChild(tag);
+        var keys = Object.keys(groups).filter(function (k) { return (groups[k] || []).length || ownEntries.some(function (e) { return e.label === k; }); });
+        // make sure a category the member just scored in always shows
+        ownEntries.forEach(function (e) {
+          if (keys.indexOf(e.label) === -1 && !Array.isArray(section)) keys.push(e.label);
+        });
+        keys.sort(function (a, b) {
+          var ia = BOARD_CATEGORY_ORDER.indexOf(a), ib = BOARD_CATEGORY_ORDER.indexOf(b);
+          return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+        });
+
+        var wrap = document.getElementById('board-groups');
+        wrap.innerHTML = '';
+        keys.forEach(function (cat) {
+          var scores = (groups[cat] || []).map(Number).filter(function (n) { return !isNaN(n); });
+          if (keys.length > 1 || cat !== 'All scores') {
+            var h = document.createElement('h3');
+            h.className = 'board-cat';
+            h.textContent = cat;
+            wrap.appendChild(h);
           }
-          listEl.appendChild(li);
+          wrap.appendChild(buildBoardList(cat, scores, ownEntries));
         });
         document.getElementById('board').hidden = false;
       })
@@ -335,7 +367,9 @@ function initChallengePage(challenge) {
     var scoreView = document.getElementById('score-view');
     scoreView.classList.add('show');
     window.scrollTo(0, 0);
-    renderBoard(input.entries.map(function (e) { return e.points; }));
+    renderBoard(input.entries.map(function (e) {
+      return { label: EVENT_LABELS[e.event], points: e.points };
+    }));
   });
 
   var defaultPrivacyText = document.getElementById('score-privacy').textContent;

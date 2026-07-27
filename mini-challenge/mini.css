@@ -403,6 +403,18 @@ body {
   margin: 0.2rem 0 1rem;
 }
 
+.board-cat {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin: 1.3rem 0 0.5rem;
+  text-align: center;
+}
+.board-cat:first-child { margin-top: 0; }
+
 .board-list {
   list-style: none;
   padding: 0;
