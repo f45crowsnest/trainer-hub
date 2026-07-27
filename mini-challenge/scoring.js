@@ -101,6 +101,7 @@ function prefersReducedMotion() {
 }
 
 var CARDIO_FIELD_LABELS = { row: 'Rower metres', ski: 'SkiErg metres', bike: 'Bike metres' };
+var RESISTANCE_FIELD_LABELS = { squat: 'Barbell Squat weight', bench: 'Bench Press weight' };
 
 function initChallengePage(challenge) {
   var state = { sex: null, event: null };
@@ -187,19 +188,24 @@ function initChallengePage(challenge) {
     var entries = [];
 
     if (challenge === 'resistance') {
-      if (!state.event) return fail('Please pick your lift.');
-      var resultInput = document.getElementById('f-result');
-      var result = numberField('f-result', LIMITS.resistanceResult);
-      if (result === null) return null;
+      // one form, both lifts: fill in the ones you did
+      var liftIds = { squat: 'f-squat', bench: 'f-bench' };
+      for (var lift in liftIds) {
+        var kg = optionalNumberField(liftIds[lift], LIMITS.resistanceResult, RESISTANCE_FIELD_LABELS[lift]);
+        if (kg === null) return null;
+        if (kg === undefined) continue;
 
-      // typo guard: a 12RM implying a far-beyond-elite 1RM for this sex and
-      // lift is almost certainly a wrong number, better to ask than save garbage
-      var relative = (result * EPLEY_12RM_FACTOR) / weight;
-      var baseline = STRENGTH_BASELINES[state.event][state.sex];
-      if (relative / baseline > MAX_BASELINE_MULTIPLE) {
-        return fail('That lift does not look right next to your bodyweight. Double check both numbers, or grab a coach.', resultInput);
+        // typo guard: a 12RM implying a far-beyond-elite 1RM for this sex and
+        // lift is almost certainly a wrong number, better to ask than save garbage
+        var relative = (kg * EPLEY_12RM_FACTOR) / weight;
+        if (relative / STRENGTH_BASELINES[lift][state.sex] > MAX_BASELINE_MULTIPLE) {
+          return fail('That ' + RESISTANCE_FIELD_LABELS[lift] + ' does not look right next to your bodyweight. Double check both numbers, or grab a coach.', document.getElementById(liftIds[lift]));
+        }
+        entries.push({ event: lift, result: kg });
       }
-      entries.push({ event: state.event, result: result });
+      if (!entries.length) {
+        return fail('Fill in a weight for at least one lift.', document.getElementById('f-squat'));
+      }
     } else {
       // one form, up to three ergs: fill in the ones you did
       var ergIds = { row: 'f-row', ski: 'f-ski', bike: 'f-bike' };
