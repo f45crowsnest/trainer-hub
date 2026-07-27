@@ -100,9 +100,10 @@ function prefersReducedMotion() {
   return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
+var CARDIO_FIELD_LABELS = { row: 'Rower metres', ski: 'SkiErg metres', bike: 'Bike metres' };
+
 function initChallengePage(challenge) {
   var state = { sex: null, event: null };
-  var resultInput = document.getElementById('f-result');
 
   document.querySelectorAll('.seg-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -111,13 +112,6 @@ function initChallengePage(challenge) {
       document.querySelectorAll('.seg-btn[data-group="' + group + '"]').forEach(function (b) {
         b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
       });
-      // each erg gets its own believable input range and example
-      if (group === 'event' && challenge === 'cardio') {
-        var lim = CARDIO_LIMITS[state.event];
-        resultInput.min = lim.min;
-        resultInput.max = lim.max;
-        resultInput.placeholder = state.event === 'bike' ? 'e.g. 1050' : 'e.g. 520';
-      }
     });
   });
 
@@ -159,6 +153,22 @@ function initChallengePage(challenge) {
     return value;
   }
 
+  // like numberField, but an empty box just means "did not do this one"
+  // returns: undefined = left empty, null = invalid, number = good value
+  function optionalNumberField(id, limits, label) {
+    var el = document.getElementById(id);
+    if (el.validity && el.validity.badInput) {
+      return fail('That ' + label + ' entry does not look like a number. Digits only, or leave it empty.', el);
+    }
+    if (el.value.trim() === '') return undefined;
+    var value = parseFloat(el.value);
+    if (isNaN(value)) return undefined;
+    if (value < limits.min || value > limits.max) {
+      return fail(label + ' should be between ' + limits.min + ' and ' + limits.max + ', or left empty.', el);
+    }
+    return value;
+  }
+
   function readForm() {
     clearFieldErrors();
 
@@ -174,32 +184,43 @@ function initChallengePage(challenge) {
     var height = numberField('f-height', LIMITS.height);
     if (height === null) return null;
 
-    if (!state.event) {
-      return fail(challenge === 'resistance' ? 'Please pick your lift.' : 'Please pick your erg.');
-    }
+    var entries = [];
 
-    var resultLimits = challenge === 'resistance' ? LIMITS.resistanceResult : CARDIO_LIMITS[state.event];
-    var result = numberField('f-result', resultLimits);
-    if (result === null) return null;
-
-    // typo guard: a 12RM implying a far-beyond-elite 1RM for this sex and
-    // lift is almost certainly a wrong number, better to ask than save garbage
     if (challenge === 'resistance') {
+      if (!state.event) return fail('Please pick your lift.');
+      var resultInput = document.getElementById('f-result');
+      var result = numberField('f-result', LIMITS.resistanceResult);
+      if (result === null) return null;
+
+      // typo guard: a 12RM implying a far-beyond-elite 1RM for this sex and
+      // lift is almost certainly a wrong number, better to ask than save garbage
       var relative = (result * EPLEY_12RM_FACTOR) / weight;
       var baseline = STRENGTH_BASELINES[state.event][state.sex];
       if (relative / baseline > MAX_BASELINE_MULTIPLE) {
         return fail('That lift does not look right next to your bodyweight. Double check both numbers, or grab a coach.', resultInput);
+      }
+      entries.push({ event: state.event, result: result });
+    } else {
+      // one form, up to three ergs: fill in the ones you did
+      var ergIds = { row: 'f-row', ski: 'f-ski', bike: 'f-bike' };
+      for (var erg in ergIds) {
+        var metres = optionalNumberField(ergIds[erg], CARDIO_LIMITS[erg], CARDIO_FIELD_LABELS[erg]);
+        if (metres === null) return null;
+        if (metres !== undefined) entries.push({ event: erg, result: metres });
+      }
+      if (!entries.length) {
+        return fail('Fill in metres for at least one erg.', document.getElementById('f-row'));
       }
     }
 
     return {
       challenge: challenge, name: name, sex: state.sex,
       age: age, weight: weight, height: height,
-      event: state.event, result: result
+      entries: entries
     };
   }
 
-  function saveRecord(input, points) {
+  function saveRecord(input, entry) {
     var privacyEl = document.getElementById('score-privacy');
     if (typeof MINI_CONFIG === 'undefined' || !MINI_CONFIG.SHEET_URL) {
       privacyEl.textContent =
@@ -213,9 +234,9 @@ function initChallengePage(challenge) {
     data.append('age', String(input.age));
     data.append('weightKg', String(input.weight));
     data.append('heightCm', String(input.height));
-    data.append('event', EVENT_LABELS[input.event]);
-    data.append('result', String(input.result));
-    data.append('points', String(points));
+    data.append('event', EVENT_LABELS[entry.event]);
+    data.append('result', String(entry.result));
+    data.append('points', String(entry.points));
     data.append('week', '2');
     // Cross-site rules block reading Apps Script's reply, so success stays
     // silent. keepalive lets the request finish even if they close the tab,
@@ -230,21 +251,25 @@ function initChallengePage(challenge) {
   // anonymous board: fetches points (never names) back from the records
   // endpoint and shows where this score sits. If the endpoint is not ready
   // or the network is down, the board simply stays hidden.
-  function renderBoard(ownPoints) {
+  function renderBoard(ownPointsList) {
     if (typeof MINI_CONFIG === 'undefined' || !MINI_CONFIG.SHEET_URL) return;
     fetch(MINI_CONFIG.SHEET_URL + '?week=2')
       .then(function (res) { return res.json(); })
       .then(function (data) {
         var scores = (data && data[challenge]) || [];
         scores = scores.map(Number).filter(function (n) { return !isNaN(n); });
-        // the just-submitted score may not have landed in the sheet yet,
-        // so make sure it appears on the board either way
-        if (scores.indexOf(ownPoints) === -1) scores.push(ownPoints);
+        // the just-submitted scores may not have landed in the sheet yet,
+        // so make sure each one appears on the board either way
+        var pending = scores.slice();
+        ownPointsList.forEach(function (p) {
+          var i = pending.indexOf(p);
+          if (i === -1) scores.push(p); else pending.splice(i, 1);
+        });
         scores.sort(function (a, b) { return b - a; });
 
         var listEl = document.getElementById('board-list');
         listEl.innerHTML = '';
-        var youMarked = false;
+        var unmarked = ownPointsList.slice();
         scores.forEach(function (pts, i) {
           var li = document.createElement('li');
           li.className = 'board-row';
@@ -256,8 +281,9 @@ function initChallengePage(challenge) {
           val.textContent = pts + ' pts';
           li.appendChild(rank);
           li.appendChild(val);
-          if (!youMarked && pts === ownPoints) {
-            youMarked = true;
+          var mine = unmarked.indexOf(pts);
+          if (mine !== -1) {
+            unmarked.splice(mine, 1);
             li.classList.add('board-you');
             var tag = document.createElement('span');
             tag.className = 'board-you-tag';
@@ -276,16 +302,40 @@ function initChallengePage(challenge) {
     if (!input) return;
 
     submitBtn.disabled = true;
-    var points = challenge === 'resistance' ? resistancePoints(input) : cardioPoints(input);
-    saveRecord(input, points);
+    input.entries.forEach(function (entry) {
+      var single = {
+        sex: input.sex, age: input.age, weight: input.weight,
+        event: entry.event, result: entry.result
+      };
+      entry.points = challenge === 'resistance' ? resistancePoints(single) : cardioPoints(single);
+      saveRecord(input, entry);
+    });
 
-    document.getElementById('score-number').textContent = String(points);
-    document.getElementById('score-msg').textContent = scoreMessage(points, input.name);
+    var best = Math.max.apply(null, input.entries.map(function (e) { return e.points; }));
+    document.getElementById('score-number').textContent = String(best);
+    document.getElementById('score-msg').textContent = scoreMessage(best, input.name);
+
+    // multiple ergs in one go: show the per-erg breakdown under the big number
+    var breakdownEl = document.getElementById('score-breakdown');
+    if (breakdownEl) {
+      breakdownEl.innerHTML = '';
+      if (input.entries.length > 1) {
+        input.entries.forEach(function (entry) {
+          var li = document.createElement('li');
+          li.textContent = EVENT_LABELS[entry.event] + ': ' + entry.points + ' pts';
+          breakdownEl.appendChild(li);
+        });
+        breakdownEl.hidden = false;
+      } else {
+        breakdownEl.hidden = true;
+      }
+    }
+
     document.getElementById('form-view').style.display = 'none';
     var scoreView = document.getElementById('score-view');
     scoreView.classList.add('show');
     window.scrollTo(0, 0);
-    renderBoard(points);
+    renderBoard(input.entries.map(function (e) { return e.points; }));
   });
 
   var defaultPrivacyText = document.getElementById('score-privacy').textContent;
@@ -293,9 +343,11 @@ function initChallengePage(challenge) {
   document.getElementById('again-btn').addEventListener('click', function () {
     document.getElementById('score-view').classList.remove('show');
     document.getElementById('form-view').style.display = '';
-    document.getElementById('f-result').value = '';
+    document.querySelectorAll('.result-field').forEach(function (el) { el.value = ''; });
     document.getElementById('score-privacy').textContent = defaultPrivacyText;
     document.getElementById('board').hidden = true;
+    var breakdownEl = document.getElementById('score-breakdown');
+    if (breakdownEl) breakdownEl.hidden = true;
     submitBtn.disabled = false;
     window.scrollTo(0, 0);
   });

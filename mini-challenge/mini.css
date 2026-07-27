@@ -357,6 +357,27 @@ body {
   margin: 0 auto 1.8rem;
 }
 
+.score-breakdown {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 1.2rem;
+  max-width: 20rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.score-breakdown li {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--navy);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---------- anonymous board ---------- */
 
 .board {

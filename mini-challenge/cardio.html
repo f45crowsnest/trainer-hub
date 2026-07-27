@@ -20,7 +20,7 @@
 
     <div id="form-view">
       <h1 class="page-title brand-navy">Cardio</h1>
-      <p class="page-sub">2 minutes, one erg, everything you've got. Punch in your metres when you're done.</p>
+      <p class="page-sub">2 minutes per erg, everything you've got. Did more than one? Fill in each one you did, one submit scores the lot.</p>
 
       <noscript><p class="noscript-note">Your browser has JavaScript switched off, so the score can't be calculated. Turn it on and refresh, or grab a trainer.</p></noscript>
 
@@ -56,18 +56,19 @@
       </div>
 
       <div class="field">
-        <label>Your erg</label>
-        <div class="seg three" role="group" aria-label="Erg">
-          <button type="button" class="seg-btn" data-group="event" data-value="row" aria-pressed="false">Rower</button>
-          <button type="button" class="seg-btn" data-group="event" data-value="ski" aria-pressed="false">SkiErg</button>
-          <button type="button" class="seg-btn" data-group="event" data-value="bike" aria-pressed="false">Bike</button>
-        </div>
+        <label for="f-row">Rower: metres in 2 minutes</label>
+        <input id="f-row" class="result-field" type="number" inputmode="numeric" min="100" max="900" placeholder="e.g. 520">
+        <p class="hint">Skip any erg you did not do. Read the metres straight off the screen.</p>
       </div>
 
       <div class="field">
-        <label for="f-result">Metres in 2 minutes</label>
-        <input id="f-result" type="number" inputmode="numeric" min="100" max="2600" placeholder="e.g. 520">
-        <p class="hint">Read it straight off the erg screen.</p>
+        <label for="f-ski">SkiErg: metres in 2 minutes</label>
+        <input id="f-ski" class="result-field" type="number" inputmode="numeric" min="100" max="900" placeholder="e.g. 480">
+      </div>
+
+      <div class="field">
+        <label for="f-bike">Bike: metres in 2 minutes</label>
+        <input id="f-bike" class="result-field" type="number" inputmode="numeric" min="200" max="2600" placeholder="e.g. 1050">
       </div>
 
       <button class="submit-btn" id="submit-btn" type="button">Get my score</button>
@@ -78,6 +79,7 @@
       <p class="score-number" id="score-number">0</p>
       <p class="score-points-word">Points</p>
       <p class="score-msg" id="score-msg"></p>
+      <ul class="score-breakdown" id="score-breakdown" hidden></ul>
       <p class="score-privacy" id="score-privacy">Your score goes straight into Jino's private records. No other member sees it. 🔒</p>
       <section class="board" id="board" hidden>
         <h2 class="board-title">The board so far</h2>
