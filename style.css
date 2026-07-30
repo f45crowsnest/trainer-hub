@@ -839,6 +839,10 @@ body {
   transform: scale(0.98);
 }
 
+.reminder-photo + .reminder-photo {
+  margin-top: 0.6rem;
+}
+
 .reminder-photo img {
   display: block;
   width: 100%;
