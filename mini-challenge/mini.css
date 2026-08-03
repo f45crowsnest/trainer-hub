@@ -304,6 +304,35 @@ body {
   color: #fff;
 }
 
+/* bar colour buttons: a colour swatch on the card, full fill when picked */
+.seg-red, .seg-blue, .seg-black { position: relative; }
+
+.seg-red::before, .seg-blue::before, .seg-black::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  vertical-align: -2px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.seg-red::before { background: #D22B2B; }
+.seg-blue::before { background: #1E56C9; }
+.seg-black::before { background: #191919; }
+
+.seg-red[aria-pressed="true"] { background: #D22B2B; border-color: #D22B2B; color: #fff; }
+.seg-blue[aria-pressed="true"] { background: #1E56C9; border-color: #1E56C9; color: #fff; }
+.seg-black[aria-pressed="true"] { background: #191919; border-color: #191919; color: #fff; }
+
+.seg-red[aria-pressed="true"]::before,
+.seg-blue[aria-pressed="true"]::before,
+.seg-black[aria-pressed="true"]::before {
+  background: #fff;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
 .form-error {
   display: none;
   background: #FBEAEA;
