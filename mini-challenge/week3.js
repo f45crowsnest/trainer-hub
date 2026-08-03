@@ -275,12 +275,35 @@ function initWeek3Page(kind) {
     return listEl;
   }
 
+  // The board endpoint takes several seconds to wake up (free Google script),
+  // so we fetch it while the member is still filling in the form. At submit
+  // the cached copy shows instantly, then a fresh fetch quietly updates it.
+  var cachedBoard = null;
+
+  function fetchBoardData() {
+    if (typeof MINI_CONFIG === 'undefined' || !MINI_CONFIG.SHEET_URL) {
+      return Promise.reject(new Error('no sheet url'));
+    }
+    return fetch(MINI_CONFIG.SHEET_URL + '?week=3')
+      .then(function (res) { return res.json(); });
+  }
+
+  fetchBoardData()
+    .then(function (data) { cachedBoard = data; })
+    .catch(function () { /* prefetch failed, submit-time fetch will retry */ });
+
   function renderBoard(ownEntries) {
-    if (typeof MINI_CONFIG === 'undefined' || !MINI_CONFIG.SHEET_URL) return;
-    fetch(MINI_CONFIG.SHEET_URL + '?week=3')
-      .then(function (res) { return res.json(); })
+    if (cachedBoard) renderBoardFromData(cachedBoard, ownEntries);
+    fetchBoardData()
       .then(function (data) {
-        var section = (data && data[kind]) || {};
+        cachedBoard = data;
+        renderBoardFromData(data, ownEntries);
+      })
+      .catch(function () { /* cached render (if any) stands, else board stays hidden */ });
+  }
+
+  function renderBoardFromData(data, ownEntries) {
+    var section = (data && data[kind]) || {};
         var groups = Array.isArray(section) ? {} : section;
 
         var keys = Object.keys(groups).filter(function (k) { return (groups[k] || []).length; });
@@ -292,19 +315,17 @@ function initWeek3Page(kind) {
           return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
         });
 
-        var wrap = document.getElementById('board-groups');
-        wrap.innerHTML = '';
-        keys.forEach(function (cat) {
-          var scores = (groups[cat] || []).map(Number).filter(function (n) { return !isNaN(n); });
-          var h = document.createElement('h3');
-          h.className = 'board-cat';
-          h.textContent = cat;
-          wrap.appendChild(h);
-          wrap.appendChild(buildBoardList(cat, scores, ownEntries));
-        });
-        document.getElementById('board').hidden = false;
-      })
-      .catch(function () { /* board stays hidden, the score still stands */ });
+    var wrap = document.getElementById('board-groups');
+    wrap.innerHTML = '';
+    keys.forEach(function (cat) {
+      var scores = (groups[cat] || []).map(Number).filter(function (n) { return !isNaN(n); });
+      var h = document.createElement('h3');
+      h.className = 'board-cat';
+      h.textContent = cat;
+      wrap.appendChild(h);
+      wrap.appendChild(buildBoardList(cat, scores, ownEntries));
+    });
+    document.getElementById('board').hidden = false;
   }
 
   var defaultPrivacyText = document.getElementById('score-privacy').textContent;
